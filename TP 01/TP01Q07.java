@@ -1,99 +1,372 @@
-/*Leia duas strings sendo que a primeira é o nome de uma página web e a segunda, seu endereço. 
-Por exemplo, Pontifícia Universidade Católica de Minas Gerais'' e www.pucminas.br''. 
-Em seguida, mostre na tela o número de vogais (sem e com acento), consoantes e dos padrões $\<br\>$'' e $<table>$'' que aparecem no código dessa página. 
-A entrada padrão é composta por várias linhas. Cada uma contém várias strings sendo que a primeira é um endereço web e as demais o nome dessa página web. 
-A última linha da entrada padrão contém a palavra ``FIM''.
-
-A saída padrão contém várias linhas sendo que cada uma apresenta o número de ocorrência (valor $x_{i}$ entre parênteses) de cada caractere ou string solicitado. 
-Cada linha de saída será da seguinte forma: 
-a($x_{1}$) e($x_{2}$) i($x_{3}$) o($x_{4}$) u($x_{5}$) á($x_{6}$) é($x_{7}$) í($x_{8}$) ó($x_{9}$) ú($x_{10}$) à($x_{11}$) è($x_{12}$) ì($x_{13}$) 
-ò($x_{14}$) ù($x_{15}$) ã($x_{16}$) õ($x_{17}$) â($x_{19}$) ê($x_{19}$) î($x_{20}$) ô($x_{21}$) û($x_{22}$) consoante($x_{23}$) $<br>$($x_{24}$) $<table>$($x_{25}$) 
-nomepágina($x_{26}$). */
-
-import java.io.*;
+/* import java.io.*;
 import java.net.*;
 
-//classe que vai contar br e table
-class Counter {
-    public int[] a;
-    public int[] e;
-    public int[] i;
-    public int[] o;
-    public int[] u;
-    public int consoante;
-    public int br;
-    public int table;
-    public String show;
+class ExemploURL {
+   public static String getHtml(String endereco){
+      URL url;
+      InputStream is = null;
+      BufferedReader br;
+      String resp = "", line;
 
-    Counter(String show) {
-        // indices dos arrays:
-        // 0 - letra normal
-        // 1 - letra com acento agudo
-        // 2 - letra com crase
-        // 3 - letra com til
-        // 4 - letra com acento circunflexo
-        this.a = new int[5];
-        this.e = new int[5];
-        this.i = new int[5];
-        this.o = new int[5];
-        this.u = new int[5];
+      try {
+         url = new URL(endereco);
+         is = url.openStream();  // throws an IOException
+         br = new BufferedReader(new InputStreamReader(is));
 
-        this.consoante = 0;
-        this.br = 0;
-        this.table = 0;
-        this.show = show;
+         while ((line = br.readLine()) != null) {
+            resp += line + "\n";
+         }
+      } catch (MalformedURLException mue) {
+         mue.printStackTrace();
+      } catch (IOException ioe) {
+         ioe.printStackTrace();
+      } 
+
+      try {
+         is.close();
+      } catch (IOException ioe) {
+         // nothing to see here
+
+      }
+
+      return resp;
+   }
+   public static void main(String[] args) {
+      String endereco, html;
+      endereco = "http://maratona.crc.pucminas.br/series/Friends.html";
+      html = getHtml(endereco);
+      System.out.print(html);
+   }
+}*/
+
+/*Leia duas strings sendo que a primeira é o nome de uma página web e a segunda, seu endereço. 
+Por exemplo, Pontifícia Universidade Católica de Minas Gerais e www.pucminas.br. 
+Em seguida, mostre na tela o número de vogais (sem e com acento), consoantes e dos padrões <br> e <table> que aparecem no código dessa página. 
+A entrada padrão é composta por várias linhas. Cada uma contém várias strings sendo que a primeira é um endereço web e as demais o nome dessa página web. 
+A última linha da entrada padrão contém a palavra FIM. A saída padrão contém várias linhas sendo que cada uma apresenta o número de ocorrência 
+(valor x_{i} entre parênteses) de cada caractere ou string solicitado. 
+Cada linha de saída será da seguinte forma: a(x_{1}) e(x_{2}) i(x_{3}) o(x_{4}) u(x_{5}) á(x_{6}) é(x_{7}) í(x_{8}) ó(x_{9}) ú(x_{10}) à(x_{11}) 
+è(x_{12}) ì(x_{13}) ò(x_{14}) ù(x_{15}) ã(x_{16}) õ(x_{17}) â(x_{19}) ê(x_{19}) î(x_{20}) ô(x_{21}) û(x_{22}) consoante(x_{23}) *<br>*(x_{24}) 
+*<table>*(x_{25}) nomepágina(x_{26}). */
+
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import java.io.*;
+import java.nio.charset.*;
+
+class MyIO {
+
+    private static BufferedReader in = new BufferedReader(
+            new InputStreamReader(System.in, Charset.forName("ISO-8859-1")));
+    private static String charset = "ISO-8859-1";
+
+    public static void setCharset(String charset_) {
+        charset = charset_;
+        in = new BufferedReader(new InputStreamReader(System.in, Charset.forName(charset)));
     }
 
-    // método de print das respostas
-    public String toString() {
-        return "a(" + this.a[0] + ") " +
-                "e(" + this.e[0] + ") " +
-                "i(" + this.i[0] + ") " +
-                "o(" + this.o[0] + ") " +
-                "u(" + this.u[0] + ") " +
-                "á(" + this.a[1] + ") " +
-                "é(" + this.e[1] + ") " +
-                "í(" + this.i[1] + ") " +
-                "ó(" + this.o[1] + ") " +
-                "ú(" + this.u[1] + ") " +
-                "à(" + this.a[2] + ") " +
-                "è(" + this.e[2] + ") " +
-                "ì(" + this.i[2] + ") " +
-                "ò(" + this.o[2] + ") " +
-                "ù(" + this.u[2] + ") " +
-                "ã(" + this.a[3] + ") " +
-                "õ(" + this.o[3] + ") " +
-                "â(" + this.a[4] + ") " +
-                "ê(" + this.e[4] + ") " +
-                "î(" + this.i[4] + ") " +
-                "ô(" + this.o[4] + ") " +
-                "û(" + this.u[4] + ") " +
-                "consoante(" + this.consoante + ") " +
-                "<br>(" + this.br + ") " +
-                "<table>(" + this.table + ") " +
-                this.show;
+    public static void print() {
+    }
+
+    public static void print(int x) {
+        try {
+            PrintStream out = new PrintStream(System.out, true, charset);
+            out.print(x);
+        } catch (UnsupportedEncodingException e) {
+            System.out.println("Erro: charset invalido");
+        }
+    }
+
+    public static void print(float x) {
+        try {
+            PrintStream out = new PrintStream(System.out, true, charset);
+            out.print(x);
+        } catch (UnsupportedEncodingException e) {
+            System.out.println("Erro: charset invalido");
+        }
+    }
+
+    public static void print(double x) {
+        try {
+            PrintStream out = new PrintStream(System.out, true, charset);
+            out.print(x);
+        } catch (UnsupportedEncodingException e) {
+            System.out.println("Erro: charset invalido");
+        }
+    }
+
+    public static void print(String x) {
+        try {
+            PrintStream out = new PrintStream(System.out, true, charset);
+            out.print(x);
+        } catch (UnsupportedEncodingException e) {
+            System.out.println("Erro: charset invalido");
+        }
+    }
+
+    public static void print(boolean x) {
+        try {
+            PrintStream out = new PrintStream(System.out, true, charset);
+            out.print(x);
+        } catch (UnsupportedEncodingException e) {
+            System.out.println("Erro: charset invalido");
+        }
+    }
+
+    public static void print(char x) {
+        try {
+            PrintStream out = new PrintStream(System.out, true, charset);
+            out.print(x);
+        } catch (UnsupportedEncodingException e) {
+            System.out.println("Erro: charset invalido");
+        }
+    }
+
+    public static void println() {
+    }
+
+    public static void println(int x) {
+        try {
+            PrintStream out = new PrintStream(System.out, true, charset);
+            out.println(x);
+        } catch (UnsupportedEncodingException e) {
+            System.out.println("Erro: charset invalido");
+        }
+    }
+
+    public static void println(float x) {
+        try {
+            PrintStream out = new PrintStream(System.out, true, charset);
+            out.println(x);
+        } catch (UnsupportedEncodingException e) {
+            System.out.println("Erro: charset invalido");
+        }
+    }
+
+    public static void println(double x) {
+        try {
+            PrintStream out = new PrintStream(System.out, true, charset);
+            out.println(x);
+        } catch (UnsupportedEncodingException e) {
+            System.out.println("Erro: charset invalido");
+        }
+    }
+
+    public static void println(String x) {
+        try {
+            PrintStream out = new PrintStream(System.out, true, charset);
+            out.println(x);
+        } catch (UnsupportedEncodingException e) {
+            System.out.println("Erro: charset invalido");
+        }
+    }
+
+    public static void println(boolean x) {
+        try {
+            PrintStream out = new PrintStream(System.out, true, charset);
+            out.println(x);
+        } catch (UnsupportedEncodingException e) {
+            System.out.println("Erro: charset invalido");
+        }
+    }
+
+    public static void println(char x) {
+        try {
+            PrintStream out = new PrintStream(System.out, true, charset);
+            out.println(x);
+        } catch (UnsupportedEncodingException e) {
+            System.out.println("Erro: charset invalido");
+        }
+    }
+
+    public static void printf(String formato, double x) {
+        try {
+            PrintStream out = new PrintStream(System.out, true, charset);
+            out.printf(formato, x);// "%.2f"
+        } catch (UnsupportedEncodingException e) {
+            System.out.println("Erro: charset invalido");
+        }
+    }
+
+    public static double readDouble() {
+        double d = -1;
+        try {
+            d = Double.parseDouble(readString().trim().replace(",", "."));
+        } catch (Exception e) {
+        }
+        return d;
+    }
+
+    public static double readDouble(String str) {
+        try {
+            PrintStream out = new PrintStream(System.out, true, charset);
+            out.print(str);
+        } catch (UnsupportedEncodingException e) {
+            System.out.println("Erro: charset invalido");
+        }
+        return readDouble();
+    }
+
+    public static float readFloat() {
+        return (float) readDouble();
+    }
+
+    public static float readFloat(String str) {
+        return (float) readDouble(str);
+    }
+
+    public static int readInt() {
+        int i = -1;
+        try {
+            i = Integer.parseInt(readString().trim());
+        } catch (Exception e) {
+        }
+        return i;
+    }
+
+    public static int readInt(String str) {
+        try {
+            PrintStream out = new PrintStream(System.out, true, charset);
+            out.print(str);
+        } catch (UnsupportedEncodingException e) {
+            System.out.println("Erro: charset invalido");
+        }
+        return readInt();
+    }
+
+    public static String readString() {
+        String s = "";
+        char tmp;
+        try {
+            do {
+                tmp = (char) in.read();
+                if (tmp != '\n' && tmp != ' ' && tmp != 13) {
+                    s += tmp;
+                }
+            } while (tmp != '\n' && tmp != ' ');
+        } catch (IOException ioe) {
+            System.out.println("lerPalavra: " + ioe.getMessage());
+        }
+        return s;
+    }
+
+    public static String readString(String str) {
+        try {
+            PrintStream out = new PrintStream(System.out, true, charset);
+            out.print(str);
+        } catch (UnsupportedEncodingException e) {
+            System.out.println("Erro: charset invalido");
+        }
+        return readString();
+    }
+
+    public static String readLine() {
+        String s = "";
+        char tmp;
+        try {
+            do {
+                tmp = (char) in.read();
+                if (tmp != '\n' && tmp != 13) {
+                    s += tmp;
+                }
+            } while (tmp != '\n');
+        } catch (IOException ioe) {
+            System.out.println("lerPalavra: " + ioe.getMessage());
+        }
+        return s;
+    }
+
+    public static String readLine(String str) {
+        try {
+            PrintStream out = new PrintStream(System.out, true, charset);
+            out.print(str);
+        } catch (UnsupportedEncodingException e) {
+            System.out.println("Erro: charset invalido");
+        }
+        return readLine();
+    }
+
+    public static char readChar() {
+        char resp = ' ';
+        try {
+            resp = (char) in.read();
+        } catch (Exception e) {
+        }
+        return resp;
+    }
+
+    public static char readChar(String str) {
+        try {
+            PrintStream out = new PrintStream(System.out, true, charset);
+            out.print(str);
+        } catch (UnsupportedEncodingException e) {
+            System.out.println("Erro: charset invalido");
+        }
+        return readChar();
+    }
+
+    public static boolean readBoolean() {
+        boolean resp = false;
+        String str = "";
+
+        try {
+            str = readString();
+        } catch (Exception e) {
+        }
+
+        if (str.equals("true") || str.equals("TRUE") || str.equals("t") || str.equals("1") ||
+                str.equals("verdadeiro") || str.equals("VERDADEIRO") || str.equals("V")) {
+            resp = true;
+        }
+
+        return resp;
+    }
+
+    public static boolean readBoolean(String str) {
+        try {
+            PrintStream out = new PrintStream(System.out, true, charset);
+            out.print(str);
+        } catch (UnsupportedEncodingException e) {
+            System.out.println("Erro: charset invalido");
+        }
+        return readBoolean();
+    }
+
+    public static void pause() {
+        try {
+            in.read();
+        } catch (Exception e) {
+        }
+    }
+
+    public static void pause(String str) {
+        try {
+            PrintStream out = new PrintStream(System.out, true, charset);
+            out.print(str);
+        } catch (UnsupportedEncodingException e) {
+            System.out.println("Erro: charset invalido");
+        }
+        pause();
     }
 }
 
 public class TP01Q07 {
-    // verifica se a palavra é igual a FIM
-    public static boolean FIM(String str) {
-        return str.length() == 3 && str.charAt(0) == 'F' && str.charAt(1) == 'I' && str.charAt(2) == 'M';
+
+    public static boolean isFim(String s) {
+        return (s.length() >= 3 && s.charAt(0) == 'F' && s.charAt(1) == 'I' && s.charAt(2) == 'M');
     }
 
-    // busca o html da página depois de receber o link dela
     @SuppressWarnings("deprecation")
-    public static String getHtml(String addr) {
+    public static String getHtml(String endereco) {
         URL url;
         InputStream is = null;
         BufferedReader br;
-
-        String resp = new String();
-        String line = new String();
+        String resp = "", line;
 
         try {
-            url = new URL(addr);
-            is = url.openStream();
+            url = new URL(endereco);
+            is = url.openStream(); // throws an IOException
             br = new BufferedReader(new InputStreamReader(is));
 
             while ((line = br.readLine()) != null) {
@@ -108,172 +381,179 @@ public class TP01Q07 {
         try {
             is.close();
         } catch (IOException ioe) {
+            // nothing to see here
+
         }
 
         return resp;
     }
 
-    // verifica se a letra é maiuscula
-    public static boolean verificaMaiuscula(char c) {
-        return 'A' <= c && c <= 'Z';
-    }
-
-    // verifica se a letra é minuscula
-    public static boolean verificaMinuscula(char c) {
-        return 'a' <= c && c <= 'z';
-    }
-
-    // verifica se o char é uma letra
-    public static boolean verificaLetra(char c) {
-        return verificaMaiuscula(c) || verificaMinuscula(c);
-    }
-
-    // verifica se é uma vogal
-    public static boolean verificaVogal(char c) {
-        if (verificaMaiuscula(c))
-            return c == 'A' || c == 'E' || c == 'I' || c == 'O' || c == 'U';
-        else if (verificaMinuscula(c))
-            return c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u';
-        else
-            return false;
-    }
-
-    // verifica se é uma consoante
-    public static boolean verificaConsoante(char c) {
-        return verificaMinuscula(c) && !verificaVogal(c);
-    }
-
-    // verifica se a String é igual ao <br>
-    public static boolean verificaBr(String str, int i) {
-        return str.charAt(i) == '<' &&
-                str.charAt(i) == 'b' &&
-                str.charAt(i) == 'r' &&
-                str.charAt(i) == '>';
-    }
-
-    // verifica se a String é igual ao <table>
-    public static boolean verificaTable(String str, int i) {
-        return str.charAt(i) == '<' &&
-                str.charAt(i + 1) == 't' &&
-                str.charAt(i + 2) == 'a' &&
-                str.charAt(i + 3) == 'b' &&
-                str.charAt(i + 4) == 'l' &&
-                str.charAt(i + 5) == 'e' &&
-                str.charAt(i + 6) == '>';
-    }
-
-    // percorre o html todo
-    public static void searchHtml(Counter counter, String html) {
-        for (int i = 0; i < html.length(); i++) {
-            // conta <table>
-            if (verificaTable(html, i)) {
-                counter.table++;
-                i += 6;
-            } else if (verificaBr(html, i)) {
-                // conta <br>
-                counter.br++;
-                i += 3;
-            } else if (verificaConsoante(html.charAt(i))) {
-                // conta consoante
-                counter.consoante++;
-            } else {
-                switch (html.charAt(i)) {
-                    case 'a':
-                        counter.a[0]++;
-                        break;
-                    case 'e':
-                        counter.e[0]++;
-                        break;
-                    case 'i':
-                        counter.i[0]++;
-                        break;
-                    case 'o':
-                        counter.o[0]++;
-                        break;
-                    case 'u':
-                        counter.u[0]++;
-                        break;
-                    case 225:
-                        counter.a[1]++;
-                        break;
-                    case 233:
-                        counter.e[1]++;
-                        break;
-                    case 237:
-                        counter.i[1]++;
-                        break;
-                    case 243:
-                        counter.o[1]++;
-                        break;
-                    case 250:
-                        counter.u[1]++;
-                        break;
-                    case 224:
-                        counter.a[2]++;
-                        break;
-                    case 232:
-                        counter.e[2]++;
-                        break;
-                    case 236:
-                        counter.i[2]++;
-                        break;
-                    case 242:
-                        counter.o[2]++;
-                        break;
-                    case 249:
-                        counter.u[2]++;
-                        break;
-                    case 227:
-                        counter.a[3]++;
-                        break;
-                    case 245:
-                        counter.o[3]++;
-                        break;
-                    case 226:
-                        counter.a[4]++;
-                        break;
-                    case 234:
-                        counter.e[4]++;
-                        break;
-                    case 238:
-                        counter.i[4]++;
-                        break;
-                    case 244:
-                        counter.o[4]++;
-                        break;
-                    case 251:
-                        counter.u[4]++;
-                        break;
-                    default:
-                        break;
+    public static int hasTag(String html, String tag) {
+        int qtd = 0;
+        if (tag == "<table>") {
+            for (int i = 0; i < html.length(); i++) {
+                if (html.charAt(i) == '<') {
+                    if (html.charAt(i + 1) == 't' && html.charAt(i + 2) == 'a' && html.charAt(i + 3) == 'b'
+                            && html.charAt(i + 4) == 'l' && html.charAt(i + 5) == 'e' && html.charAt(i + 6) == '>') {
+                        qtd++;
+                    }
+                }
+            }
+        } else {
+            for (int i = 0; i < html.length(); i++) {
+                if (html.charAt(i) == '<') {
+                    if (html.charAt(i + 1) == 'b' && html.charAt(i + 2) == 'r' && html.charAt(i + 3) == '>') {
+                        qtd++;
+                    }
                 }
             }
         }
+        return qtd;
+    }
+
+    public static void Has(String html, String titulo) {
+        int[] qtd = new int[25];
+        qtd[23] = hasTag(html, "<br>");
+        qtd[24] = hasTag(html, "<table>");
+        for (int i = 0; i < html.length(); i++) {
+            if (html.charAt(i) >= 97 && html.charAt(i) <= 122 && (html.charAt(i) != 97 && html.charAt(i) != 101
+                    && html.charAt(i) != 105 && html.charAt(i) != 111 && html.charAt(i) != 117)) {
+                qtd[22]++;
+            } else {
+                if (html.charAt(i) == 'a')
+                    qtd[0]++;
+                else {
+                    if (html.charAt(i) == 'e')
+                        qtd[1]++;
+                    else {
+                        if (html.charAt(i) == 'i')
+                            qtd[2]++;
+                        else {
+                            if (html.charAt(i) == 'o')
+                                qtd[3]++;
+                            else {
+                                if (html.charAt(i) == 'u')
+                                    qtd[4]++;
+                                else {
+                                    if (html.charAt(i) == '\u00E1') // á
+                                        qtd[5]++;
+                                    else {
+                                        if (html.charAt(i) == '\u00E9')
+                                            qtd[6]++;
+                                        else {
+                                            if (html.charAt(i) == '\u00ED')
+                                                qtd[7]++;
+                                            else {
+                                                if (html.charAt(i) == '\u00F3')
+                                                    qtd[8]++;
+                                                else {
+                                                    if (html.charAt(i) == '\u00FA')
+                                                        qtd[9]++;
+                                                    else {
+                                                        if (html.charAt(i) == '\u00E0')
+                                                            qtd[10]++;
+                                                        else {
+                                                            if (html.charAt(i) == '\u00E8')
+                                                                qtd[11]++;
+                                                            else {
+                                                                if (html.charAt(i) == '\u00EC')
+                                                                    qtd[12]++;
+                                                                else {
+                                                                    if (html.charAt(i) == '\u00F2')
+                                                                        qtd[13]++;
+                                                                    else {
+                                                                        if (html.charAt(i) == '\u00F9')
+                                                                            qtd[14]++;
+                                                                        else {
+                                                                            if (html.charAt(i) == '\u00E3')
+                                                                                qtd[15]++;
+                                                                            else {
+                                                                                if (html.charAt(i) == '\u00F5')
+                                                                                    qtd[16]++;
+                                                                                else {
+                                                                                    if (html.charAt(i) == '\u00E2')
+                                                                                        qtd[17]++;
+                                                                                    else {
+                                                                                        if (html.charAt(i) == '\u00EA')
+                                                                                            qtd[18]++;
+                                                                                        else {
+                                                                                            if (html.charAt(
+                                                                                                    i) == '\u00EE')
+                                                                                                qtd[19]++;
+                                                                                            else {
+                                                                                                if (html.charAt(
+                                                                                                        i) == '\u00F4')
+                                                                                                    qtd[20]++;
+                                                                                                else {
+                                                                                                    if (html.charAt(
+                                                                                                            i) == '\u00FB')
+                                                                                                        qtd[21]++;
+                                                                                                }
+                                                                                            }
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if (qtd[24] > 0) { // table
+            qtd[0] = qtd[0] - qtd[24];
+            qtd[1] = qtd[1] - qtd[24];
+            qtd[22] = qtd[22] - 3 * qtd[24];
+        }
+        if (qtd[23] > 0) {// br
+            qtd[22] = qtd[22] - 2 * qtd[23];
+        }
+
+        System.out.println("a(" + (qtd[0]) + ") e(" + (qtd[1]) + ") i(" + qtd[2] + ") o(" + qtd[3] + ") u(" + qtd[4]
+                + ") " + (char) '\u00E1' + "(" + qtd[5] + ") " + (char) '\u00E9' + "(" + qtd[6] + ") " + (char) '\u00ED'
+                + "(" +
+                qtd[7] + ") " + (char) '\u00F3' + "(" + qtd[8] + ") " + (char) '\u00FA' + "(" + qtd[9] + ") "
+                + (char) '\u00E0' + "(" + qtd[10]
+                + ") " + (char) '\u00E8' + "(" + qtd[11] + ") " + (char) '\u00EC' + "(" + qtd[12] + ") "
+                + (char) '\u00F2' + "(" +
+                qtd[13] + ") " + (char) '\u00F9' + "(" + qtd[14] + ") " + (char) '\u00E3' + "(" + qtd[15] + ") "
+                + (char) '\u00F5' + "("
+                + qtd[16] + ") " + (char) '\u00E2' + "(" + qtd[17] + ") " + (char) '\u00EA' + "(" + qtd[18] + ") "
+                + (char) '\u00EE' + "(" + qtd[19] + ") " + (char) '\u00F4' + "(" + qtd[20] + ") " + (char) '\u00FB'
+                + "(" + qtd[21]
+                + ") consoante(" + qtd[22] + ") <br>(" + qtd[23] + ") <table>(" + qtd[24] + ") " + titulo);
     }
 
     public static void main(String[] args) {
-        String site = new String();
-        String enderecoSite = new String();
-        String html = new String();
-
-        boolean stop;
+        String[] linhas = new String[100];
+        String[] endereco = new String[50];
+        String[] titulo = new String[50];
+        int numEntrada = 0;
 
         do {
-            site = MyIO.readLine();
+            linhas[numEntrada] = MyIO.readLine();
+        } while (isFim(linhas[numEntrada++]) == false);
+        numEntrada--;
 
-            // chama a função que compara as palavras, pra ver se não é igual a FIM
-            stop = FIM(site);
+        String html;
 
-            if (!stop) {
-                Counter cont = new Counter(site);
-
-                enderecoSite = MyIO.readLine();
-                html = getHtml(enderecoSite);
-
-                searchHtml(cont, html);
-
-                MyIO.println(cont.toString());
-            }
-        } while (!stop);
+        for (int i = 0, j = 0; i < numEntrada; i += 2, j++) {
+            titulo[j] = linhas[i];
+            endereco[j] = linhas[i + 1];
+            html = getHtml(endereco[j]);
+            Has(html, titulo[j]);
+        }
     }
 }
